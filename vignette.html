@@ -8263,7 +8263,7 @@ Sample edges:  68
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>To deeply understand what everything is happening in the code, we will take a look at the source code of the Graph Convolutional Network (GCN) in PyTorch. Along the way, we will explain both the mathematical and implementation details of the architecture.</p>
+<p>To deeply understand what everything is happening in the code, we will take a look at the source code of the Graph Convolutional Network (GCN) in PyTorch <a href="">pytorch_details.ipynb</a>. Along the way, we will only explain the mathematical and implementation details of the architecture in a high-level way.</p>
 </div>
 </div>
 </div>
@@ -8274,106 +8274,18 @@ Sample edges:  68
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h4 id="Understand-Linear-Layer-4">Understand Linear Layer <a href="https://pytorch.org/docs/stable/_modules/torch/nn/modules/linear.html#Linear">4</a><a class="anchor-link" href="#Understand-Linear-Layer-4">¶</a></h4>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h5 id="Overlook">Overlook<a class="anchor-link" href="#Overlook">¶</a></h5>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Linear</span><span class="p">(</span><span class="n">Module</span><span class="p">):</span>
-  <span class="n">__constants__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"in_features"</span><span class="p">,</span> <span class="s2">"out_features"</span><span class="p">]</span>
-    <span class="n">in_features</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="n">out_features</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="n">weight</span><span class="p">:</span> <span class="n">Tensor</span>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">in_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">out_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">factory_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"device"</span><span class="p">:</span> <span class="n">device</span><span class="p">,</span> <span class="s2">"dtype"</span><span class="p">:</span> <span class="n">dtype</span><span class="p">}</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span> <span class="o">=</span> <span class="n">in_features</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span> <span class="o">=</span> <span class="n">out_features</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">out_features</span><span class="p">,</span> <span class="n">in_features</span><span class="p">),</span> <span class="o">**</span><span class="n">factory_kwargs</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="k">if</span> <span class="n">bias</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">out_features</span><span class="p">,</span> <span class="o">**</span><span class="n">factory_kwargs</span><span class="p">))</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">register_parameter</span><span class="p">(</span><span class="s2">"bias"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
-
-    <span class="k">def</span> <span class="nf">reset_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="c1"># Setting a=sqrt(5) in kaiming_uniform is the same as initializing with</span>
-        <span class="c1"># uniform(-1/sqrt(in_features), 1/sqrt(in_features)). For details, see</span>
-        <span class="c1"># https://github.com/pytorch/pytorch/issues/57109</span>
-        <span class="n">init</span><span class="o">.</span><span class="n">kaiming_uniform_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">fan_in</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">init</span><span class="o">.</span><span class="n">_calculate_fan_in_and_fan_out</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">)</span>
-            <span class="n">bound</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">fan_in</span><span class="p">)</span> <span class="k">if</span> <span class="n">fan_in</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
-            <span class="n">init</span><span class="o">.</span><span class="n">uniform_</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">,</span> <span class="o">-</span><span class="n">bound</span><span class="p">,</span> <span class="n">bound</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">input</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
-        <span class="k">return</span> <span class="n">F</span><span class="o">.</span><span class="n">linear</span><span class="p">(</span><span class="nb">input</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weight</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="p">)</span>
-
-    <span class="k">def</span> <span class="nf">extra_repr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">"in_features=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">in_features</span><span class="si">}</span><span class="s2">, out_features=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">out_features</span><span class="si">}</span><span class="s2">, bias=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">bias</span><span class="w"> </span><span class="ow">is</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="kc">None</span><span class="si">}</span><span class="s2">"</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h5 id="Define-Data-Type">Define Data Type<a class="anchor-link" href="#Define-Data-Type">¶</a></h5>
-</div>
-</div>
-</div>
-</div>
-<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
-<div class="jp-Cell-inputWrapper" tabindex="0">
-<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
-</div>
-<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>The first snippet defines the constants that will stay unchanged duirng the lifecycle of the <code>Linear</code> class, and the data types of the input parameters.</p>
+<h4 id="Graph-Convolutional-Network-(GCN)">Graph Convolutional Network (GCN)<a class="anchor-link" href="#Graph-Convolutional-Network-(GCN)">¶</a></h4><p>The key equation in the forward propagation of a GCN layer can essentially be summarized as follows:</p>
+$$\mathbf{X}' = \hat{\mathbf{D}}^{-\frac{1}{2}} \hat{\mathbf{A}} \hat{\mathbf{D}}^{-\frac{1}{2}} \mathbf{X} \Theta,$$<p>where</p>
 <ul>
-<li><p><code>in_features</code>: The number of input features.</p>
+<li><p>$\Theta$ is the weight matrix of the layer, with $\Theta \in \mathbb{R}^{I \times O}$ where $I$ is the number of input features and $O$ is the number of output features.</p>
 </li>
-<li><p><code>out_features</code>: The number of output features.</p>
+<li><p>$\mathbf{X} \in \mathbb{R}^{N \times I}$ is the input feature matrix, where $N$ is the number of nodes and $I$ is the number of input features.</p>
 </li>
-<li><p><code>weight</code>: The learnable weights of the layer, which is a tensor object (like numpy array).</p>
+<li><p>$\hat{\mathbf{A}} = \mathbf{A} + \mathbf{I}$ is the adjacency matrix of the graph with added self-connections.</p>
+</li>
+<li><p>$\hat{\mathbf{D}}$ is the degree matrix of $\hat{\mathbf{A}}$ that is normalized. It is a diagonal matrix with $\hat{D}_{ii} = \sum_j \hat{A}_{ij}$. The reason we need to normalized $\mathbf{A}$ is to prevent nodes with higher degrees (many neighbors) contribute much more to their neighbors' feature aggregation thus dominate the aggregated features.</p>
 </li>
 </ul>
-<div class="highlight"><pre><span></span><span class="n">__constants__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"in_features"</span><span class="p">,</span> <span class="s2">"out_features"</span><span class="p">]</span>
-    <span class="n">in_features</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="n">out_features</span><span class="p">:</span> <span class="nb">int</span>
-    <span class="n">weight</span><span class="p">:</span> <span class="n">Tensor</span>
-</pre></div>
 </div>
 </div>
 </div>
@@ -8384,7 +8296,7 @@ Sample edges:  68
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<h5 id="Initialization">Initialization<a class="anchor-link" href="#Initialization">¶</a></h5>
+<p><img alt="slide_05" src="./img/slides/slide_05.jpg"/></p>
 </div>
 </div>
 </div>
@@ -8395,17 +8307,41 @@ Sample edges:  68
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>Similarly, the <code>__init__()</code> function in the <code>Linear</code> class initializes the attributes of the class instance.</p>
-<div class="highlight"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">in_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">out_features</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-        <span class="n">bias</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">device</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">dtype</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-</pre></div>
-<p>The arrow <code>-&gt; None</code> thing is a convention in Python  to indicate that the function returns <code>None</code>. For example:</p>
+<p>For the example above,
+$$
+\hat{\mathbf{D}}^{-\frac{1}{2}} \hat{\mathbf{A}} \hat{\mathbf{D}}^{-\frac{1}{2}} = \begin{bmatrix}
+\frac{1}{\sqrt{3}} &amp; 0 &amp; 0 \\
+0 &amp; \frac{1}{\sqrt{3}} &amp; 0 \\
+0 &amp; 0 &amp; \frac{1}{\sqrt{3}}
+\end{bmatrix}
+\begin{bmatrix}
+1 &amp; 1 &amp; 1 \\
+1 &amp; 1 &amp; 1 \\
+1 &amp; 1 &amp; 1
+\end{bmatrix}
+\begin{bmatrix}
+\frac{1}{\sqrt{3}} &amp; 0 &amp; 0 \\
+0 &amp; \frac{1}{\sqrt{3}} &amp; 0 \\
+0 &amp; 0 &amp; \frac{1}{\sqrt{3}}
+\end{bmatrix}.
+$$</p>
+$$
+= \begin{bmatrix}
+\frac{1}{\sqrt{3}} &amp; \frac{1}{\sqrt{3}} &amp; \frac{1}{\sqrt{3}} \\
+\frac{1}{\sqrt{3}} &amp; \frac{1}{\sqrt{3}} &amp; \frac{1}{\sqrt{3}} \\
+\frac{1}{\sqrt{3}} &amp; \frac{1}{\sqrt{3}} &amp; \frac{1}{\sqrt{3}}
+\end{bmatrix}
+\begin{bmatrix}
+\frac{1}{\sqrt{3}} &amp; 0 &amp; 0 \\
+0 &amp; \frac{1}{\sqrt{3}} &amp; 0 \\
+0 &amp; 0 &amp; \frac{1}{\sqrt{3}}
+\end{bmatrix}
+= \begin{bmatrix}
+\frac{1}{3} &amp; \frac{1}{3} &amp; \frac{1}{3} \\
+\frac{1}{3} &amp; \frac{1}{3} &amp; \frac{1}{3} \\
+\frac{1}{3} &amp; \frac{1}{3} &amp; \frac{1}{3}
+\end{bmatrix}.
+$$
 </div>
 </div>
 </div>
@@ -8416,9 +8352,7 @@ Sample edges:  68
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">some_function</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s2">"This function doesn't return anything explicit."</span><span class="p">)</span>
-</pre></div>
+<p>The normalization factor is computed based on the degree of the nodes. It then applies to each feature of the nodes and aggregate the features of the neighbors. If a node doesn't connect to a node, then it will multiple the feature of that node by 0. This way cleverly utilizes the connectivity of the graph to aggregate the features of the neighbors.</p>
 </div>
 </div>
 </div>
@@ -8429,35 +8363,30 @@ Sample edges:  68
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<div class="highlight"><pre><span></span><span class="n">factory_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"device"</span><span class="p">:</span> <span class="n">device</span><span class="p">,</span> <span class="s2">"dtype"</span><span class="p">:</span> <span class="n">dtype</span><span class="p">}</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">in_features</span> <span class="o">=</span> <span class="n">in_features</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out_features</span> <span class="o">=</span> <span class="n">out_features</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">weight</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span>
-            <span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">out_features</span><span class="p">,</span> <span class="n">in_features</span><span class="p">),</span> <span class="o">**</span><span class="n">factory_kwargs</span><span class="p">)</span>
-        <span class="p">)</span>
-</pre></div>
-<p>The factory_kwargs is a dictionary that contains the device and data type of the tensor. They will be passed into the some pytorch built-in functions to create tensors that having the specified device and data type, like the <code>torch.empty()</code> function.
-Because gpu is faster than cpu, which is efficient at dealing floating point operations, many deep learning models are trained on gpu. The <code>device</code> parameter is used to specify the device that the tensor will be stored on.</p>
-<p>For example:</p>
-<div class="highlight"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">'cuda:0'</span><span class="p">)</span> <span class="c1"># tensor is assigned to gpu:0 (if multiple gpus are available)</span>
-
-<span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">'cpu'</span><span class="p">)</span> <span class="c1"># tensor is assgined to cpu</span>
-</pre></div>
-<p>Here, the <code>device</code> and <code>dtype</code> params are passed to the <code>torch.empty()</code> function to create a tensor with the specified device and data type. <code>torch.empty()</code> initializes the tensor with random values of specified shape.</p>
-<div class="highlight"><pre><span></span><span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
-</pre></div>
-<div class="highlight"><pre><span></span><span class="go">tensor([[ 9.4064e+13,  2.8000e+01,  9.3493e+13],</span>
-<span class="go">        [ 7.5751e+18,  7.1428e+18,  7.5955e+18]])</span>
-</pre></div>
-<p><code>super().__init__()</code> calls the parent class's <code>__init__()</code> method, which is the <code>Module</code> class in this case. The <code>Module</code> class is the base class for all neural network modules in PyTorch. It provides a lot of useful methods and attributes for building neural networks, for example the <code>register_parameter()</code> method.</p>
-<div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">bias</span><span class="p">:</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">bias</span> <span class="o">=</span> <span class="n">Parameter</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">out_features</span><span class="p">,</span> <span class="o">**</span><span class="n">factory_kwargs</span><span class="p">))</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">register_parameter</span><span class="p">(</span><span class="s2">"bias"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="bp">self</span><span class="o">.</span><span class="n">reset_parameters</span><span class="p">()</span>
-</pre></div>
-<p>Here, the <code>bias</code> parameter is used to determine whether the layer will have a bias term. If <code>bias</code> is <code>True</code>, a bias tensor is created and stored in the <code>bias</code> attribute. <code>Parameter()</code> function from <code>torch.nn.parameter</code> acts similar like <code>reset_parameters()</code>, which will treat bias as learnable parameters for the layer. Otherwise, the <code>bias</code> attribute is set to <code>None</code>.</p>
+$$
+\hat{\mathbf{D}}^{-\frac{1}{2}} \hat{\mathbf{A}} \hat{\mathbf{D}}^{-\frac{1}{2}} \mathbf{X} = \begin{bmatrix}
+\frac{1}{3} &amp; \frac{1}{3} &amp; \frac{1}{3} \\
+\frac{1}{3} &amp; \frac{1}{3} &amp; \frac{1}{3} \\
+\frac{1}{3} &amp; \frac{1}{3} &amp; \frac{1}{3}
+\end{bmatrix}
+\begin{bmatrix}
+1 &amp; 2 \\
+-3 &amp; 2 \\
+2 &amp; 1
+\end{bmatrix}.
+$$$$
+=\begin{bmatrix}
+\frac{1}{3} \cdot 1 + \frac{1}{3} \cdot -3 + \frac{1}{3} \cdot 2  &amp; \frac{1}{3} \cdot 2 + \frac{1}{3} \cdot 2 + \frac{1}{3} \cdot 1 \\
+\frac{1}{3} \cdot 1 + \frac{1}{3} \cdot -3 + \frac{1}{3} \cdot 2  &amp; \frac{1}{3} \cdot 2 + \frac{1}{3} \cdot 2 + \frac{1}{3} \cdot 1 \\
+\frac{1}{3} \cdot 1 + \frac{1}{3} \cdot -3 + \frac{1}{3} \cdot 2  &amp; \frac{1}{3} \cdot 2 + \frac{1}{3} \cdot 2 + \frac{1}{3} \cdot 1 
+\end{bmatrix}
+$$$$
+=\begin{bmatrix}
+0 &amp; \frac{5}{3} \\
+0 &amp; \frac{5}{3} \\
+0 &amp; \frac{5}{3}
+\end{bmatrix}
+$$
 </div>
 </div>
 </div>
@@ -8468,6 +8397,7 @@ Because gpu is faster than cpu, which is efficient at dealing floating point ope
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>It then mapped $\mathbb{X}$ to a higher dimension space by multiplying the weight matrix $\Theta$.</p>
 </div>
 </div>
 </div>
@@ -8478,7 +8408,35 @@ Because gpu is faster than cpu, which is efficient at dealing floating point ope
 </div>
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
-<p>The GCN model is designed to process molecular graph data using PyTorch Geometric. It includes an initial convolutional layer and three additional GCN layers, each with an embedding size of 64, to progressively learn hierarchical graph representations. A global pooling layer combines max and mean pooling to aggregate node features into a graph-level representation, which is passed through a linear layer to predict the solubility value.</p>
+$$
+\mathbf{X} \cdot \Theta = \begin{bmatrix}
+0 \cdot w_{00} + \frac{5}{3} \cdot w_{10} &amp; 0 \cdot w_{01} + \frac{5}{3} \cdot w_{11} &amp; 0 \cdot w_{02} + \frac{5}{3} \cdot w_{12} &amp; 0 \cdot w_{03} + \frac{5}{3} \cdot w_{13} &amp; 0 \cdot w_{04} + \frac{5}{3} \cdot w_{14} &amp; 0 \cdot w_{05} + \frac{5}{3} \cdot w_{15} \\
+0 \cdot w_{00} + \frac{5}{3} \cdot w_{10} &amp; 0 \cdot w_{01} + \frac{5}{3} \cdot w_{11} &amp; 0 \cdot w_{02} + \frac{5}{3} \cdot w_{12} &amp; 0 \cdot w_{03} + \frac{5}{3} \cdot w_{13} &amp; 0 \cdot w_{04} + \frac{5}{3} \cdot w_{14} &amp; 0 \cdot w_{05} + \frac{5}{3} \cdot w_{15} \\
+0 \cdot w_{00} + \frac{5}{3} \cdot w_{10} &amp; 0 \cdot w_{01} + \frac{5}{3} \cdot w_{11} &amp; 0 \cdot w_{02} + \frac{5}{3} \cdot w_{12} &amp; 0 \cdot w_{03} + \frac{5}{3} \cdot w_{13} &amp; 0 \cdot w_{04} + \frac{5}{3} \cdot w_{14} &amp; 0 \cdot w_{05} + \frac{5}{3} \cdot w_{15} \\
+\end{bmatrix}
+$$
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>Here we chose the embedding size to be 6 for demonstration. In our model, we will use 64 as the embedding size, which is the number of columns in the weight matrix $\Theta$.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="jp-Cell jp-MarkdownCell jp-Notebook-cell">
+<div class="jp-Cell-inputWrapper" tabindex="0">
+<div class="jp-Collapser jp-InputCollapser jp-Cell-inputCollapser">
+</div>
+<div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
+<p>A global pooling layer combines max and mean pooling to aggregate node features into a graph-level representation, which is passed through a linear layer to predict the solubility value.</p>
 </div>
 </div>
 </div>
@@ -8550,7 +8508,7 @@ Because gpu is faster than cpu, which is efficient at dealing floating point ope
 <div class="jp-InputArea jp-Cell-inputArea"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="Graph-Pooling">Graph Pooling<a class="anchor-link" href="#Graph-Pooling">¶</a></h3><p>Aggregate all information of the final graph</p>
-<p><img alt="image.png" src="../img/gnn_global_pooling.jpg"/></p>
+<p><img alt="graph_pooling" src="./img/gnn_global_pooling.jpg"/></p>
 </div>
 </div>
 </div>
@@ -8659,7 +8617,7 @@ Model parameters:  13249
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput" data-mime-type="text/markdown">
 <h3 id="Batching-with-Graphs">Batching with Graphs<a class="anchor-link" href="#Batching-with-Graphs">¶</a></h3><p>Concatenate all node features in a large matrix. Combine each individual adjacency information into a large adjacency matrix or list.</p>
 <p>NOTE: each individual graph is disconnected in the adjacency matrix, thus no information is shared between graphs.</p>
-<p><img alt="image.png" src="../img/gnn_batching.jpg"/></p>
+<p><img alt="graph_batching" src="./img/gnn_batching.jpg"/></p>
 </div>
 </div>
 </div>
