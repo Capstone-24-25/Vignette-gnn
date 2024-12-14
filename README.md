@@ -11,6 +11,14 @@ This project aims to implement a **Graph Neural Network (GNN)** in Python and ap
 
 ### Repository Contents
 
+data/ - Folder containing the ESOL dataset; it is also included in the `MoleculeNet` module of `torch_geometric`
+img/ - Folder containing images used in the vignette
+  img/slides/ - Folder containing images used in the vignette
+scripts/ - Folder containing the Python scripts used to implement the GNN and train it on the ESOL dataset
+  scripts/draft.ipynb - Jupyter notebook containing the draft code for the GNN implementation
+  scripts/model.py - Python script containing the GNN model implementation
+  scripts/training.py - Python script containing the training code for the GNN
+  scripts/visualization.py - Python script containing the code to visualize the GNN predictions
 
 
 ### Reference List
